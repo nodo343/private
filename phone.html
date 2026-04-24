@@ -373,8 +373,10 @@
 
   <script>
     const PHOTO_SPAWN_INTERVAL = 5000;
-    const PHOTO_BURST_COUNT = 3;
-    const PHOTO_BURST_STAGGER = 320;
+    const PHOTO_BURST_COUNT = 6;
+    const PHOTO_BURST_STAGGER = 180;
+    const PHOTO_INITIAL_BURSTS = 2;
+    const PHOTO_INITIAL_DELAY = 260;
 
     const neonField = document.getElementById("neonField");
     const heartsField = document.getElementById("heartsField");
@@ -502,7 +504,7 @@
       card.className = "photo-card";
       card.style.setProperty("--left", `${randomBetween(4, 72).toFixed(2)}%`);
       card.style.setProperty("--top", `${randomBetween(46, 76).toFixed(2)}%`);
-      card.style.setProperty("--width", `${randomBetween(104, 164).toFixed(0)}px`);
+      card.style.setProperty("--width", `${randomBetween(92, 154).toFixed(0)}px`);
       card.style.setProperty("--rotate", `${randomBetween(-14, 14).toFixed(2)}deg`);
       card.style.setProperty("--mid-rotate", `${randomBetween(-6, 6).toFixed(2)}deg`);
       card.style.setProperty("--end-rotate", `${randomBetween(-8, 8).toFixed(2)}deg`);
@@ -539,6 +541,12 @@
     function spawnPhotoBurst() {
       for (let index = 0; index < PHOTO_BURST_COUNT; index += 1) {
         window.setTimeout(spawnPhotoCard, index * PHOTO_BURST_STAGGER);
+      }
+    }
+
+    function spawnInitialBursts() {
+      for (let index = 0; index < PHOTO_INITIAL_BURSTS; index += 1) {
+        window.setTimeout(spawnPhotoBurst, index * (PHOTO_BURST_STAGGER * 3 + PHOTO_INITIAL_DELAY));
       }
     }
 
@@ -589,6 +597,7 @@
     function applyPhotoSet(sources, statusMessage) {
       appState.photoUrls = sources;
       photoField.innerHTML = "";
+      spawnInitialBursts();
       startPhotoLoop();
     }
 
