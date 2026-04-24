@@ -366,22 +366,19 @@
         <div class="headline">
           <span class="kicker">for dea</span>
           <h1>i love you dea</h1>
-          <p>Your photo drifts in every 5 seconds.</p>
         </div>
-
-        <p class="status" id="statusText">Preparing your floating photos...</p>
       </div>
     </section>
   </main>
 
   <script>
     const PHOTO_SPAWN_INTERVAL = 5000;
+    const PHOTO_BURST_COUNT = 3;
+    const PHOTO_BURST_STAGGER = 320;
 
     const neonField = document.getElementById("neonField");
     const heartsField = document.getElementById("heartsField");
     const photoField = document.getElementById("photoField");
-    const statusText = document.getElementById("statusText");
-
     const builtInPhotoCandidates = [
       "dea-card.png",
       "dea-photo.jpg",
@@ -505,7 +502,7 @@
       card.className = "photo-card";
       card.style.setProperty("--left", `${randomBetween(4, 72).toFixed(2)}%`);
       card.style.setProperty("--top", `${randomBetween(46, 76).toFixed(2)}%`);
-      card.style.setProperty("--width", `${randomBetween(116, 186).toFixed(0)}px`);
+      card.style.setProperty("--width", `${randomBetween(104, 164).toFixed(0)}px`);
       card.style.setProperty("--rotate", `${randomBetween(-14, 14).toFixed(2)}deg`);
       card.style.setProperty("--mid-rotate", `${randomBetween(-6, 6).toFixed(2)}deg`);
       card.style.setProperty("--end-rotate", `${randomBetween(-8, 8).toFixed(2)}deg`);
@@ -539,6 +536,12 @@
       photoField.appendChild(card);
     }
 
+    function spawnPhotoBurst() {
+      for (let index = 0; index < PHOTO_BURST_COUNT; index += 1) {
+        window.setTimeout(spawnPhotoCard, index * PHOTO_BURST_STAGGER);
+      }
+    }
+
     function clearPhotoLoop() {
       if (appState.photoTimer) {
         window.clearTimeout(appState.photoTimer);
@@ -551,16 +554,12 @@
 
       const queueNext = () => {
         appState.photoTimer = window.setTimeout(() => {
-          spawnPhotoCard();
+          spawnPhotoBurst();
           queueNext();
         }, PHOTO_SPAWN_INTERVAL);
       };
 
       queueNext();
-    }
-
-    function setStatus(message) {
-      statusText.textContent = message;
     }
 
     function preloadImage(source) {
@@ -589,7 +588,6 @@
 
     function applyPhotoSet(sources, statusMessage) {
       appState.photoUrls = sources;
-      setStatus(statusMessage);
       photoField.innerHTML = "";
       startPhotoLoop();
     }
@@ -600,13 +598,13 @@
     resolveBuiltInPhotos().then((sources) => {
       if (sources.length > 0) {
         const suffix = sources.length === 1 ? "" : "s";
-        applyPhotoSet(sources, `Your floating photo${suffix} appear${sources.length === 1 ? "s" : ""} every 5 seconds.`);
+        applyPhotoSet(sources, "");
         return;
       }
 
       applyPhotoSet(
         placeholderPhotos,
-        "Save your image as dea-photo.jpg next to this file.",
+        "",
       );
     });
   </script>
