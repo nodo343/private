@@ -502,8 +502,8 @@
             <article class="step">
               <div class="step-index">2</div>
               <div>
-                <strong>Keep phone and computer on the same Wi-Fi</strong>
-                <p>The QR opens the phone page over your local network.</p>
+                <strong>Local mode or public mode</strong>
+                <p>Local works on the same Wi-Fi. Public hosting works for anyone you send it to.</p>
               </div>
             </article>
 
@@ -524,7 +524,7 @@
           </div>
 
           <p class="hint" id="hintText">
-            If the QR does not appear, start the server first and refresh this page.
+            If you want to send this to someone else, this folder must be opened from a public link, not only your local Wi-Fi.
           </p>
         </div>
 
@@ -568,12 +568,21 @@
       }
     }
 
+    function isLocalhost(hostname) {
+      return hostname === "localhost" || hostname === "127.0.0.1";
+    }
+
     async function resolveLanOrigin() {
       const isServed = window.location.protocol === "http:" || window.location.protocol === "https:";
 
       if (!isServed) {
         hintText.textContent = "Server is not running from this file. Start start-server.bat, then open http://localhost:8000.";
         return fallbackLanOrigin;
+      }
+
+      if (!isLocalhost(window.location.hostname)) {
+        hintText.textContent = `Public/share mode active. QR target: ${window.location.origin}/phone.html`;
+        return window.location.origin;
       }
 
       try {
