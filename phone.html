@@ -369,7 +369,7 @@
           <p>Your photo drifts in every 5 seconds.</p>
         </div>
 
-        <p class="status" id="statusText">Looking for your built-in photo...</p>
+        <p class="status" id="statusText">Preparing your floating photos...</p>
       </div>
     </section>
   </main>
@@ -383,6 +383,7 @@
     const statusText = document.getElementById("statusText");
 
     const builtInPhotoCandidates = [
+      "dea-card.png",
       "dea-photo.jpg",
       "dea-photo.jpeg",
       "dea-photo.png",
@@ -571,17 +572,19 @@
       });
     }
 
-    async function resolveBuiltInPhoto() {
+    async function resolveBuiltInPhotos() {
+      const sources = [];
+
       for (const candidate of builtInPhotoCandidates) {
         try {
           const source = await preloadImage(candidate);
-          return source;
+          sources.push(source);
         } catch (error) {
           continue;
         }
       }
 
-      return null;
+      return sources;
     }
 
     function applyPhotoSet(sources, statusMessage) {
@@ -594,9 +597,10 @@
     buildNeonField();
     buildHeartsField();
 
-    resolveBuiltInPhoto().then((source) => {
-      if (source) {
-        applyPhotoSet([source], "Your photo appears every 5 seconds.");
+    resolveBuiltInPhotos().then((sources) => {
+      if (sources.length > 0) {
+        const suffix = sources.length === 1 ? "" : "s";
+        applyPhotoSet(sources, `Your floating photo${suffix} appear${sources.length === 1 ? "s" : ""} every 5 seconds.`);
         return;
       }
 
