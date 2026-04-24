@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"
+  />
+  <meta name="theme-color" content="#040711" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>I Love You Dea</title>
+  <style>
+    :root {
+      --page-bg: #02030a;
+      --panel-bg: #040711;
+      --panel-edge: rgba(255, 255, 255, 0.08);
+      --cyan: #d7fbff;
+      --cyan-glow: rgba(106, 242, 255, 0.9);
+      --cyan-soft: rgba(163, 248, 255, 0.42);
+      --rose: #ff8ea0;
+      --rose-deep: rgba(255, 88, 109, 0.92);
+      --text-soft: rgba(236, 247, 255, 0.72);
+      --safe-top: max(18px, env(safe-area-inset-top));
+      --safe-right: max(18px, env(safe-area-inset-right));
+      --safe-bottom: max(18px, env(safe-area-inset-bottom));
+      --safe-left: max(18px, env(safe-area-inset-left));
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(53, 120, 161, 0.16), transparent 36%),
+        radial-gradient(circle at 20% 80%, rgba(255, 67, 98, 0.08), transparent 26%),
+        linear-gradient(180deg, #050711 0%, #02030a 45%, #000000 100%);
+      color: #ffffff;
+    }
+
+    body {
+      font-family: "Trebuchet MS", "Lucida Sans Unicode", sans-serif;
+      overscroll-behavior: none;
+      touch-action: manipulation;
+    }
+
+    .layout {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .phone-frame {
+      width: min(92vw, 430px);
+      aspect-ratio: 9 / 16;
+      padding: 12px;
+      border-radius: 34px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04)),
+        rgba(0, 0, 0, 0.36);
+      box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 0 80px rgba(89, 239, 255, 0.12);
+    }
+
+    .scene {
+      position: relative;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(100, 236, 255, 0.12), transparent 26%),
+        radial-gradient(circle at 80% 20%, rgba(255, 65, 98, 0.16), transparent 22%),
+        radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.06), transparent 18%),
+        linear-gradient(180deg, rgba(4, 9, 19, 0.98), rgba(1, 2, 8, 0.98));
+      outline: 1px solid rgba(255, 255, 255, 0.08);
+      outline-offset: -1px;
+    }
+
+    .scene.is-dragging {
+      outline-color: rgba(163, 248, 255, 0.58);
+      box-shadow: inset 0 0 0 1px rgba(163, 248, 255, 0.2);
+    }
+
+    .ambient,
+    .stars,
+    .neon-field,
+    .photo-field,
+    .hearts-field {
+      position: absolute;
+      inset: 0;
+    }
+
+    .ambient {
+      filter: blur(40px);
+      opacity: 0.56;
+    }
+
+    .ambient-a {
+      background:
+        radial-gradient(circle at 20% 30%, rgba(106, 242, 255, 0.18), transparent 22%),
+        radial-gradient(circle at 50% 58%, rgba(106, 242, 255, 0.14), transparent 18%);
+      animation: ambientPulse 9s ease-in-out infinite alternate;
+    }
+
+    .ambient-b {
+      background:
+        radial-gradient(circle at 80% 18%, rgba(255, 92, 116, 0.16), transparent 18%),
+        radial-gradient(circle at 66% 75%, rgba(255, 118, 138, 0.13), transparent 20%);
+      animation: ambientPulse 12s ease-in-out infinite alternate-reverse;
+    }
+
+    .stars,
+    .stars::before,
+    .stars::after {
+      background-image:
+        radial-gradient(circle at 10% 16%, rgba(255, 255, 255, 0.9) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 18% 54%, rgba(255, 255, 255, 0.55) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 34% 22%, rgba(255, 255, 255, 0.85) 0 1px, transparent 1.4px),
+        radial-gradient(circle at 48% 48%, rgba(255, 255, 255, 0.55) 0 1px, transparent 1.6px),
+        radial-gradient(circle at 68% 30%, rgba(255, 255, 255, 0.82) 0 1px, transparent 1.4px),
+        radial-gradient(circle at 74% 70%, rgba(255, 255, 255, 0.6) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 85% 42%, rgba(255, 255, 255, 0.9) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 92% 82%, rgba(255, 255, 255, 0.55) 0 1px, transparent 1.7px);
+      animation: twinkle 6s ease-in-out infinite alternate;
+    }
+
+    .stars::before,
+    .stars::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+
+    .stars::before {
+      transform: scale(1.08);
+      opacity: 0.45;
+      animation-duration: 8s;
+    }
+
+    .stars::after {
+      transform: scale(0.94);
+      opacity: 0.35;
+      animation-duration: 10s;
+    }
+
+    .headline {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 114px;
+      z-index: 5;
+    }
+
+    .kicker {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-soft);
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .headline h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 12vw, 4rem);
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      color: var(--cyan);
+      text-shadow:
+        0 0 10px rgba(166, 248, 255, 0.95),
+        0 0 28px rgba(86, 232, 255, 0.6),
+        0 0 48px rgba(86, 232, 255, 0.22);
+    }
+
+    .headline p {
+      max-width: 22ch;
+      margin: 14px 0 0;
+      color: var(--text-soft);
+      line-height: 1.45;
+      font-size: 0.98rem;
+    }
+
+    .control-bar {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 32px;
+      z-index: 6;
+      display: flex;
+      gap: 10px;
+    }
+
+    #photoPicker {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .button {
+      flex: 1 1 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 18px;
+      border: 1px solid rgba(165, 248, 255, 0.24);
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(142, 246, 255, 0.22), rgba(142, 246, 255, 0.08)),
+        rgba(255, 255, 255, 0.04);
+      color: #f3fcff;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      user-select: none;
+    }
+
+    .button:active {
+      transform: scale(0.98);
+    }
+
+    .button-ghost {
+      flex-basis: 112px;
+      background:
+        linear-gradient(180deg, rgba(255, 124, 146, 0.16), rgba(255, 124, 146, 0.06)),
+        rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 136, 156, 0.22);
+    }
+
+    .status {
+      position: absolute;
+      left: 24px;
+      bottom: 88px;
+      z-index: 5;
+      margin: 0;
+      max-width: 20ch;
+      color: rgba(230, 241, 249, 0.58);
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    .neon-word {
+      position: absolute;
+      left: var(--left);
+      top: var(--top);
+      z-index: 1;
+      white-space: nowrap;
+      color: rgba(218, 251, 255, 0.98);
+      font-size: calc(0.86rem + (var(--size) * 0.9rem));
+      letter-spacing: -0.04em;
+      opacity: 0;
+      text-shadow:
+        0 0 9px rgba(205, 251, 255, 0.95),
+        0 0 22px rgba(106, 242, 255, 0.62),
+        0 0 44px rgba(106, 242, 255, 0.2);
+      filter: blur(0.1px);
+      animation: wordFloat var(--duration) ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+
+    .heart {
+      position: absolute;
+      top: -14%;
+      left: var(--left);
+      z-index: 4;
+      font-size: var(--size);
+      color: var(--rose);
+      opacity: 0;
+      text-shadow:
+        0 0 8px rgba(255, 190, 201, 0.9),
+        0 0 18px rgba(255, 112, 137, 0.5),
+        0 0 34px rgba(255, 83, 111, 0.28);
+      animation: heartFall var(--duration) linear infinite;
+      animation-delay: var(--delay);
+    }
+
+    .photo-card {
+      position: absolute;
+      left: var(--left);
+      top: var(--top);
+      width: var(--width);
+      aspect-ratio: 4 / 5;
+      z-index: 3;
+      overflow: hidden;
+      border-radius: 26px;
+      opacity: 0;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 16px 40px rgba(0, 0, 0, 0.4),
+        0 0 36px rgba(90, 239, 255, 0.18);
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(18px);
+      animation: photoFloat var(--duration) ease-in-out forwards;
+    }
+
+    .photo-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 26%),
+        linear-gradient(0deg, rgba(7, 12, 20, 0.22), transparent 30%);
+      pointer-events: none;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .scene.is-paused .ambient,
+    .scene.is-paused .stars,
+    .scene.is-paused .stars::before,
+    .scene.is-paused .stars::after,
+    .scene.is-paused .neon-word,
+    .scene.is-paused .heart,
+    .scene.is-paused .photo-card {
+      animation-play-state: paused;
+    }
+
+    @keyframes ambientPulse {
+      from {
+        transform: scale(0.96);
+      }
+
+      to {
+        transform: scale(1.06);
+      }
+    }
+
+    @keyframes twinkle {
+      from {
+        opacity: 0.24;
+      }
+
+      to {
+        opacity: 0.52;
+      }
+    }
+
+    @keyframes wordFloat {
+      0%,
+      100% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0) rotate(var(--rotate)) scale(0.94);
+      }
+
+      18%,
+      82% {
+        opacity: 0.94;
+      }
+
+      50% {
+        opacity: 1;
+        transform: translate3d(var(--offset-x), var(--offset-y), 0) rotate(var(--rotate)) scale(1.02);
+      }
+    }
+
+    @keyframes heartFall {
+      0% {
+        top: -14%;
+        opacity: 0;
+        transform: translateX(0) scale(0.72);
+      }
+
+      10% {
+        opacity: 0.96;
+      }
+
+      55% {
+        transform: translateX(var(--drift)) scale(1);
+      }
+
+      100% {
+        top: 112%;
+        opacity: 0;
+        transform: translateX(var(--drift-end)) scale(0.82);
+      }
+    }
+
+    @keyframes photoFloat {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, 90px, 0) rotate(var(--rotate)) scale(0.74);
+      }
+
+      16% {
+        opacity: 1;
+      }
+
+      54% {
+        opacity: 0.98;
+        transform:
+          translate3d(var(--travel-x-mid), var(--travel-y-mid), 0)
+          rotate(var(--mid-rotate))
+          scale(1);
+      }
+
+      78% {
+        opacity: 0.78;
+      }
+
+      100% {
+        opacity: 0;
+        transform:
+          translate3d(var(--travel-x-end), var(--travel-y-end), 0)
+          rotate(var(--end-rotate))
+          scale(0.86);
+      }
+    }
+
+    @media (max-width: 540px) {
+      .layout {
+        padding: 0;
+      }
+
+      .phone-frame {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        aspect-ratio: auto;
+        padding: 0;
+        border-radius: 0;
+      }
+
+      .scene {
+        border-radius: 0;
+      }
+
+      .headline {
+        left: var(--safe-left);
+        right: var(--safe-right);
+        bottom: calc(112px + var(--safe-bottom));
+      }
+
+      .control-bar {
+        left: var(--safe-left);
+        right: var(--safe-right);
+        bottom: var(--safe-bottom);
+      }
+
+      .status {
+        left: var(--safe-left);
+        right: var(--safe-right);
+        bottom: calc(66px + var(--safe-bottom));
+      }
+
+      .kicker {
+        margin-top: var(--safe-top);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="phone-frame">
+      <div class="scene" id="scene">
+        <div class="ambient ambient-a" aria-hidden="true"></div>
+        <div class="ambient ambient-b" aria-hidden="true"></div>
+        <div class="stars" aria-hidden="true"></div>
+        <div class="neon-field" id="neonField" aria-hidden="true"></div>
+        <div class="photo-field" id="photoField" aria-hidden="true"></div>
+        <div class="hearts-field" id="heartsField" aria-hidden="true"></div>
+
+        <div class="headline">
+          <span class="kicker">for dea</span>
+          <h1>i love you dea</h1>
+          <p>Tap add photos, then your pictures will float through the hearts.</p>
+        </div>
+
+        <div class="control-bar">
+          <label class="button" for="photoPicker">Add photos</label>
+          <input id="photoPicker" type="file" accept="image/*" multiple />
+          <button class="button button-ghost" id="toggleMotion" type="button">Pause</button>
+        </div>
+
+        <p class="status" id="statusText">
+          Phone-ready file. Tap to add photos.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const scene = document.getElementById("scene");
+    const neonField = document.getElementById("neonField");
+    const heartsField = document.getElementById("heartsField");
+    const photoField = document.getElementById("photoField");
+    const photoPicker = document.getElementById("photoPicker");
+    const statusText = document.getElementById("statusText");
+    const toggleMotion = document.getElementById("toggleMotion");
+
+    const appState = {
+      running: true,
+      photoTimer: null,
+      objectUrls: [],
+      photoUrls: [],
+    };
+
+    function randomBetween(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function randomItem(items) {
+      return items[Math.floor(Math.random() * items.length)];
+    }
+
+    function createPlaceholder(label, toneA, toneB, accent) {
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+          <defs>
+            <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${toneA}" />
+              <stop offset="100%" stop-color="${toneB}" />
+            </linearGradient>
+            <radialGradient id="glow" cx="30%" cy="25%" r="55%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.72" />
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+          <rect width="800" height="1000" fill="url(#bg)" />
+          <rect width="800" height="1000" fill="url(#glow)" />
+          <circle cx="180" cy="170" r="128" fill="${accent}" opacity="0.16" />
+          <circle cx="625" cy="790" r="185" fill="${accent}" opacity="0.18" />
+          <path
+            d="M403 278c-36-52-119-34-135 25-10 38 7 70 40 101l95 89 94-89c34-31 52-63 41-101-16-59-100-76-135-25Z"
+            fill="none"
+            stroke="${accent}"
+            stroke-width="18"
+            opacity="0.45"
+          />
+          <path
+            d="M148 640c84-57 179-67 305-17 96 39 169 43 223 9"
+            fill="none"
+            stroke="#dffbff"
+            stroke-width="10"
+            stroke-linecap="round"
+            opacity="0.34"
+          />
+          <text
+            x="66"
+            y="848"
+            font-family="Trebuchet MS, sans-serif"
+            font-size="54"
+            fill="#f6fcff"
+            opacity="0.96"
+          >
+            i love you dea
+          </text>
+          <text
+            x="66"
+            y="912"
+            font-family="Trebuchet MS, sans-serif"
+            font-size="30"
+            fill="${accent}"
+            opacity="0.88"
+            letter-spacing="3"
+          >
+            ${label}
+          </text>
+        </svg>
+      `;
+
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    const placeholderPhotos = [
+      createPlaceholder("STARLIGHT", "#122339", "#060812", "#88f7ff"),
+      createPlaceholder("MOONBEAM", "#3b1730", "#08070f", "#ff9aac"),
+      createPlaceholder("SLOWDANCE", "#0d2a31", "#04050a", "#9ff5ff"),
+      createPlaceholder("ALWAYS", "#381223", "#05050b", "#ff829c"),
+      createPlaceholder("SOFT GLOW", "#1e153f", "#04050b", "#96f1ff"),
+    ];
+
+    appState.photoUrls = placeholderPhotos;
+
+    function buildNeonField() {
+      neonField.innerHTML = "";
+
+      for (let index = 0; index < 34; index += 1) {
+        const word = document.createElement("span");
+        word.className = "neon-word";
+        word.textContent = "i love you dea";
+        word.style.setProperty("--left", `${randomBetween(-10, 74).toFixed(2)}%`);
+        word.style.setProperty("--top", `${randomBetween(4, 88).toFixed(2)}%`);
+        word.style.setProperty("--size", randomBetween(0.48, 2).toFixed(2));
+        word.style.setProperty("--delay", `${randomBetween(-14, 0).toFixed(2)}s`);
+        word.style.setProperty("--duration", `${randomBetween(7.5, 14.5).toFixed(2)}s`);
+        word.style.setProperty("--rotate", `${randomBetween(-8, 8).toFixed(2)}deg`);
+        word.style.setProperty("--offset-x", `${randomBetween(-28, 28).toFixed(0)}px`);
+        word.style.setProperty("--offset-y", `${randomBetween(-22, 22).toFixed(0)}px`);
+        neonField.appendChild(word);
+      }
+    }
+
+    function buildHeartsField() {
+      heartsField.innerHTML = "";
+
+      for (let index = 0; index < 28; index += 1) {
+        const heart = document.createElement("span");
+        heart.className = "heart";
+        heart.textContent = Math.random() > 0.28 ? "❤" : "♡";
+        heart.style.setProperty("--left", `${randomBetween(0, 95).toFixed(2)}%`);
+        heart.style.setProperty("--size", `${randomBetween(1, 2.1).toFixed(2)}rem`);
+        heart.style.setProperty("--delay", `${randomBetween(-12, 0).toFixed(2)}s`);
+        heart.style.setProperty("--duration", `${randomBetween(6.6, 11.8).toFixed(2)}s`);
+        heart.style.setProperty("--drift", `${randomBetween(-42, 42).toFixed(0)}px`);
+        heart.style.setProperty("--drift-end", `${randomBetween(-60, 60).toFixed(0)}px`);
+        heartsField.appendChild(heart);
+      }
+    }
+
+    function createPhotoCard(source) {
+      const card = document.createElement("figure");
+      const image = document.createElement("img");
+
+      card.className = "photo-card";
+      card.style.setProperty("--left", `${randomBetween(2, 72).toFixed(2)}%`);
+      card.style.setProperty("--top", `${randomBetween(50, 78).toFixed(2)}%`);
+      card.style.setProperty("--width", `${randomBetween(108, 168).toFixed(0)}px`);
+      card.style.setProperty("--rotate", `${randomBetween(-14, 14).toFixed(2)}deg`);
+      card.style.setProperty("--mid-rotate", `${randomBetween(-6, 6).toFixed(2)}deg`);
+      card.style.setProperty("--end-rotate", `${randomBetween(-8, 8).toFixed(2)}deg`);
+      card.style.setProperty("--travel-x-mid", `${randomBetween(-24, 24).toFixed(0)}px`);
+      card.style.setProperty("--travel-y-mid", `${randomBetween(-130, -230).toFixed(0)}px`);
+      card.style.setProperty("--travel-x-end", `${randomBetween(-40, 40).toFixed(0)}px`);
+      card.style.setProperty("--travel-y-end", `${randomBetween(-250, -420).toFixed(0)}px`);
+      card.style.setProperty("--duration", `${randomBetween(5.8, 8.8).toFixed(2)}s`);
+
+      image.src = source;
+      image.alt = "Love memory";
+
+      card.appendChild(image);
+      card.addEventListener(
+        "animationend",
+        () => {
+          card.remove();
+        },
+        { once: true },
+      );
+
+      return card;
+    }
+
+    function spawnPhotoCard() {
+      if (!appState.running || appState.photoUrls.length === 0) {
+        return;
+      }
+
+      const card = createPhotoCard(randomItem(appState.photoUrls));
+      photoField.appendChild(card);
+    }
+
+    function startPhotoLoop() {
+      if (appState.photoTimer) {
+        window.clearInterval(appState.photoTimer);
+      }
+
+      appState.photoTimer = window.setInterval(spawnPhotoCard, 1400);
+    }
+
+    function revokeObjectUrls() {
+      appState.objectUrls.forEach((url) => URL.revokeObjectURL(url));
+      appState.objectUrls = [];
+    }
+
+    function setStatus(message) {
+      statusText.textContent = message;
+    }
+
+    function loadPhotoFiles(files) {
+      const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+
+      if (imageFiles.length === 0) {
+        return;
+      }
+
+      revokeObjectUrls();
+      appState.objectUrls = imageFiles.map((file) => URL.createObjectURL(file));
+      appState.photoUrls = [...appState.objectUrls];
+
+      const suffix = imageFiles.length === 1 ? "" : "s";
+      setStatus(`${imageFiles.length} photo${suffix} loaded.`);
+
+      for (let index = 0; index < Math.min(imageFiles.length, 4); index += 1) {
+        window.setTimeout(spawnPhotoCard, index * 220);
+      }
+    }
+
+    function toggleAnimation() {
+      appState.running = !appState.running;
+      scene.classList.toggle("is-paused", !appState.running);
+      toggleMotion.textContent = appState.running ? "Pause" : "Play";
+
+      if (appState.running && photoField.childElementCount < 3) {
+        spawnPhotoCard();
+        spawnPhotoCard();
+      }
+    }
+
+    function registerFileControls() {
+      photoPicker.addEventListener("change", (event) => {
+        const files = Array.from(event.target.files || []);
+        loadPhotoFiles(files);
+      });
+
+      ["dragenter", "dragover"].forEach((eventName) => {
+        scene.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          scene.classList.add("is-dragging");
+        });
+      });
+
+      ["dragleave", "drop"].forEach((eventName) => {
+        scene.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          scene.classList.remove("is-dragging");
+        });
+      });
+
+      scene.addEventListener("drop", (event) => {
+        const files = Array.from(event.dataTransfer?.files || []);
+        loadPhotoFiles(files);
+      });
+
+      toggleMotion.addEventListener("click", toggleAnimation);
+      window.addEventListener("beforeunload", revokeObjectUrls);
+    }
+
+    buildNeonField();
+    buildHeartsField();
+    registerFileControls();
+    startPhotoLoop();
+
+    window.setTimeout(() => {
+      spawnPhotoCard();
+      spawnPhotoCard();
+      spawnPhotoCard();
+    }, 250);
+  </script>
+</body>
+</html>
