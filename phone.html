@@ -12,14 +12,8 @@
   <title>I Love You Dea</title>
   <style>
     :root {
-      --page-bg: #02030a;
-      --panel-bg: #040711;
-      --panel-edge: rgba(255, 255, 255, 0.08);
       --cyan: #d7fbff;
-      --cyan-glow: rgba(106, 242, 255, 0.9);
-      --cyan-soft: rgba(163, 248, 255, 0.42);
       --rose: #ff8ea0;
-      --rose-deep: rgba(255, 88, 109, 0.92);
       --text-soft: rgba(236, 247, 255, 0.72);
       --safe-top: max(18px, env(safe-area-inset-top));
       --safe-right: max(18px, env(safe-area-inset-right));
@@ -49,45 +43,32 @@
       touch-action: manipulation;
     }
 
-    .layout {
+    .layout,
+    .screen,
+    .scene {
       min-height: 100vh;
       min-height: 100dvh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
     }
 
-    .phone-frame {
-      width: min(92vw, 430px);
-      aspect-ratio: 9 / 16;
-      padding: 12px;
-      border-radius: 34px;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04)),
-        rgba(0, 0, 0, 0.36);
-      box-shadow:
-        0 24px 80px rgba(0, 0, 0, 0.45),
-        0 0 0 1px rgba(255, 255, 255, 0.06),
-        0 0 80px rgba(89, 239, 255, 0.12);
+    .layout {
+      display: grid;
+      place-items: stretch;
+      padding: 0;
+    }
+
+    .screen {
+      width: 100vw;
+      background: transparent;
     }
 
     .scene {
       position: relative;
-      height: 100%;
       overflow: hidden;
-      border-radius: 26px;
       background:
         radial-gradient(circle at 20% 18%, rgba(100, 236, 255, 0.12), transparent 26%),
         radial-gradient(circle at 80% 20%, rgba(255, 65, 98, 0.16), transparent 22%),
         radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.06), transparent 18%),
         linear-gradient(180deg, rgba(4, 9, 19, 0.98), rgba(1, 2, 8, 0.98));
-      outline: 1px solid rgba(255, 255, 255, 0.08);
-      outline-offset: -1px;
-    }
-
-    .scene.is-dragging {
-      outline-color: rgba(163, 248, 255, 0.58);
-      box-shadow: inset 0 0 0 1px rgba(163, 248, 255, 0.2);
     }
 
     .ambient,
@@ -154,15 +135,16 @@
 
     .headline {
       position: absolute;
-      left: 24px;
-      right: 24px;
-      bottom: 114px;
+      left: max(24px, var(--safe-left));
+      right: max(24px, var(--safe-right));
+      bottom: calc(112px + var(--safe-bottom));
       z-index: 5;
+      pointer-events: none;
     }
 
     .kicker {
       display: inline-block;
-      margin-bottom: 10px;
+      margin: 0 0 12px;
       padding: 6px 10px;
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.06);
@@ -175,9 +157,10 @@
 
     .headline h1 {
       margin: 0;
-      font-size: clamp(2.4rem, 12vw, 4rem);
-      line-height: 0.92;
-      letter-spacing: -0.04em;
+      max-width: 8ch;
+      font-size: clamp(3.4rem, 13vw, 7rem);
+      line-height: 0.88;
+      letter-spacing: -0.06em;
       color: var(--cyan);
       text-shadow:
         0 0 10px rgba(166, 248, 255, 0.95),
@@ -186,70 +169,24 @@
     }
 
     .headline p {
-      max-width: 22ch;
+      max-width: 18ch;
       margin: 14px 0 0;
       color: var(--text-soft);
-      line-height: 1.45;
-      font-size: 0.98rem;
-    }
-
-    .control-bar {
-      position: absolute;
-      left: 24px;
-      right: 24px;
-      bottom: 32px;
-      z-index: 6;
-      display: flex;
-      gap: 10px;
-    }
-
-    #photoPicker {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .button {
-      flex: 1 1 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 50px;
-      padding: 0 18px;
-      border: 1px solid rgba(165, 248, 255, 0.24);
-      border-radius: 999px;
-      background:
-        linear-gradient(180deg, rgba(142, 246, 255, 0.22), rgba(142, 246, 255, 0.08)),
-        rgba(255, 255, 255, 0.04);
-      color: #f3fcff;
-      font: inherit;
-      cursor: pointer;
-      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
-      user-select: none;
-    }
-
-    .button:active {
-      transform: scale(0.98);
-    }
-
-    .button-ghost {
-      flex-basis: 112px;
-      background:
-        linear-gradient(180deg, rgba(255, 124, 146, 0.16), rgba(255, 124, 146, 0.06)),
-        rgba(255, 255, 255, 0.03);
-      border-color: rgba(255, 136, 156, 0.22);
+      line-height: 1.35;
+      font-size: clamp(0.96rem, 3.6vw, 1.15rem);
     }
 
     .status {
       position: absolute;
-      left: 24px;
-      bottom: 88px;
+      left: max(24px, var(--safe-left));
+      right: max(24px, var(--safe-right));
+      bottom: calc(28px + var(--safe-bottom));
       z-index: 5;
       margin: 0;
-      max-width: 20ch;
-      color: rgba(230, 241, 249, 0.58);
-      font-size: 0.8rem;
+      color: rgba(230, 241, 249, 0.64);
+      font-size: 0.88rem;
       line-height: 1.4;
+      pointer-events: none;
     }
 
     .neon-word {
@@ -321,16 +258,6 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-    }
-
-    .scene.is-paused .ambient,
-    .scene.is-paused .stars,
-    .scene.is-paused .stars::before,
-    .scene.is-paused .stars::after,
-    .scene.is-paused .neon-word,
-    .scene.is-paused .heart,
-    .scene.is-paused .photo-card {
-      animation-play-state: paused;
     }
 
     @keyframes ambientPulse {
@@ -423,52 +350,11 @@
           scale(0.86);
       }
     }
-
-    @media (max-width: 540px) {
-      .layout {
-        padding: 0;
-      }
-
-      .phone-frame {
-        width: 100vw;
-        height: 100vh;
-        height: 100dvh;
-        aspect-ratio: auto;
-        padding: 0;
-        border-radius: 0;
-      }
-
-      .scene {
-        border-radius: 0;
-      }
-
-      .headline {
-        left: var(--safe-left);
-        right: var(--safe-right);
-        bottom: calc(112px + var(--safe-bottom));
-      }
-
-      .control-bar {
-        left: var(--safe-left);
-        right: var(--safe-right);
-        bottom: var(--safe-bottom);
-      }
-
-      .status {
-        left: var(--safe-left);
-        right: var(--safe-right);
-        bottom: calc(66px + var(--safe-bottom));
-      }
-
-      .kicker {
-        margin-top: var(--safe-top);
-      }
-    }
   </style>
 </head>
 <body>
   <main class="layout">
-    <section class="phone-frame">
+    <section class="screen">
       <div class="scene" id="scene">
         <div class="ambient ambient-a" aria-hidden="true"></div>
         <div class="ambient ambient-b" aria-hidden="true"></div>
@@ -480,28 +366,21 @@
         <div class="headline">
           <span class="kicker">for dea</span>
           <h1>i love you dea</h1>
-          <p>Your saved photo will float through the hearts automatically.</p>
+          <p>Your photo drifts in every 5 seconds.</p>
         </div>
 
-        <div class="control-bar">
-          <label class="button" for="photoPicker">Add photos</label>
-          <input id="photoPicker" type="file" accept="image/*" multiple />
-          <button class="button button-ghost" id="toggleMotion" type="button">Pause</button>
-        </div>
-
-        <p class="status" id="statusText">Checking for your built-in photo...</p>
+        <p class="status" id="statusText">Looking for your built-in photo...</p>
       </div>
     </section>
   </main>
 
   <script>
-    const scene = document.getElementById("scene");
+    const PHOTO_SPAWN_INTERVAL = 5000;
+
     const neonField = document.getElementById("neonField");
     const heartsField = document.getElementById("heartsField");
     const photoField = document.getElementById("photoField");
-    const photoPicker = document.getElementById("photoPicker");
     const statusText = document.getElementById("statusText");
-    const toggleMotion = document.getElementById("toggleMotion");
 
     const builtInPhotoCandidates = [
       "dea-photo.jpg",
@@ -519,11 +398,8 @@
     ];
 
     const appState = {
-      running: true,
       photoTimer: null,
-      objectUrls: [],
       photoUrls: [],
-      builtInPhoto: null,
     };
 
     function randomBetween(min, max) {
@@ -557,14 +433,6 @@
             stroke="${accent}"
             stroke-width="18"
             opacity="0.45"
-          />
-          <path
-            d="M148 640c84-57 179-67 305-17 96 39 169 43 223 9"
-            fill="none"
-            stroke="#dffbff"
-            stroke-width="10"
-            stroke-linecap="round"
-            opacity="0.34"
           />
           <text
             x="66"
@@ -618,7 +486,7 @@
       for (let index = 0; index < 28; index += 1) {
         const heart = document.createElement("span");
         heart.className = "heart";
-        heart.textContent = Math.random() > 0.28 ? "❤" : "♡";
+        heart.textContent = Math.random() > 0.28 ? "\u2764" : "\u2661";
         heart.style.setProperty("--left", `${randomBetween(0, 95).toFixed(2)}%`);
         heart.style.setProperty("--size", `${randomBetween(1, 2.1).toFixed(2)}rem`);
         heart.style.setProperty("--delay", `${randomBetween(-12, 0).toFixed(2)}s`);
@@ -634,9 +502,9 @@
       const image = document.createElement("img");
 
       card.className = "photo-card";
-      card.style.setProperty("--left", `${randomBetween(2, 72).toFixed(2)}%`);
-      card.style.setProperty("--top", `${randomBetween(50, 78).toFixed(2)}%`);
-      card.style.setProperty("--width", `${randomBetween(108, 168).toFixed(0)}px`);
+      card.style.setProperty("--left", `${randomBetween(4, 72).toFixed(2)}%`);
+      card.style.setProperty("--top", `${randomBetween(46, 76).toFixed(2)}%`);
+      card.style.setProperty("--width", `${randomBetween(116, 186).toFixed(0)}px`);
       card.style.setProperty("--rotate", `${randomBetween(-14, 14).toFixed(2)}deg`);
       card.style.setProperty("--mid-rotate", `${randomBetween(-6, 6).toFixed(2)}deg`);
       card.style.setProperty("--end-rotate", `${randomBetween(-8, 8).toFixed(2)}deg`);
@@ -644,7 +512,7 @@
       card.style.setProperty("--travel-y-mid", `${randomBetween(-130, -230).toFixed(0)}px`);
       card.style.setProperty("--travel-x-end", `${randomBetween(-40, 40).toFixed(0)}px`);
       card.style.setProperty("--travel-y-end", `${randomBetween(-250, -420).toFixed(0)}px`);
-      card.style.setProperty("--duration", `${randomBetween(5.8, 8.8).toFixed(2)}s`);
+      card.style.setProperty("--duration", `${randomBetween(6.2, 8.6).toFixed(2)}s`);
 
       image.src = source;
       image.alt = "Love memory";
@@ -662,7 +530,7 @@
     }
 
     function spawnPhotoCard() {
-      if (!appState.running || appState.photoUrls.length === 0) {
+      if (appState.photoUrls.length === 0) {
         return;
       }
 
@@ -670,17 +538,24 @@
       photoField.appendChild(card);
     }
 
-    function startPhotoLoop() {
+    function clearPhotoLoop() {
       if (appState.photoTimer) {
-        window.clearInterval(appState.photoTimer);
+        window.clearTimeout(appState.photoTimer);
+        appState.photoTimer = null;
       }
-
-      appState.photoTimer = window.setInterval(spawnPhotoCard, 1400);
     }
 
-    function revokeObjectUrls() {
-      appState.objectUrls.forEach((url) => URL.revokeObjectURL(url));
-      appState.objectUrls = [];
+    function startPhotoLoop() {
+      clearPhotoLoop();
+
+      const queueNext = () => {
+        appState.photoTimer = window.setTimeout(() => {
+          spawnPhotoCard();
+          queueNext();
+        }, PHOTO_SPAWN_INTERVAL);
+      };
+
+      queueNext();
     }
 
     function setStatus(message) {
@@ -712,80 +587,22 @@
     function applyPhotoSet(sources, statusMessage) {
       appState.photoUrls = sources;
       setStatus(statusMessage);
-
-      for (let index = 0; index < Math.min(sources.length || 1, 4); index += 1) {
-        window.setTimeout(spawnPhotoCard, index * 220);
-      }
-    }
-
-    function loadPhotoFiles(files) {
-      const imageFiles = files.filter((file) => file.type.startsWith("image/"));
-
-      if (imageFiles.length === 0) {
-        return;
-      }
-
-      revokeObjectUrls();
-      appState.objectUrls = imageFiles.map((file) => URL.createObjectURL(file));
-      const suffix = imageFiles.length === 1 ? "" : "s";
-      applyPhotoSet([...appState.objectUrls], `${imageFiles.length} photo${suffix} loaded.`);
-    }
-
-    function toggleAnimation() {
-      appState.running = !appState.running;
-      scene.classList.toggle("is-paused", !appState.running);
-      toggleMotion.textContent = appState.running ? "Pause" : "Play";
-
-      if (appState.running && photoField.childElementCount < 3) {
-        spawnPhotoCard();
-        spawnPhotoCard();
-      }
-    }
-
-    function registerFileControls() {
-      photoPicker.addEventListener("change", (event) => {
-        const files = Array.from(event.target.files || []);
-        loadPhotoFiles(files);
-      });
-
-      ["dragenter", "dragover"].forEach((eventName) => {
-        scene.addEventListener(eventName, (event) => {
-          event.preventDefault();
-          scene.classList.add("is-dragging");
-        });
-      });
-
-      ["dragleave", "drop"].forEach((eventName) => {
-        scene.addEventListener(eventName, (event) => {
-          event.preventDefault();
-          scene.classList.remove("is-dragging");
-        });
-      });
-
-      scene.addEventListener("drop", (event) => {
-        const files = Array.from(event.dataTransfer?.files || []);
-        loadPhotoFiles(files);
-      });
-
-      toggleMotion.addEventListener("click", toggleAnimation);
-      window.addEventListener("beforeunload", revokeObjectUrls);
+      photoField.innerHTML = "";
+      startPhotoLoop();
     }
 
     buildNeonField();
     buildHeartsField();
-    registerFileControls();
-    startPhotoLoop();
 
     resolveBuiltInPhoto().then((source) => {
       if (source) {
-        appState.builtInPhoto = source;
-        applyPhotoSet([source], "Built-in photo active.");
+        applyPhotoSet([source], "Your photo appears every 5 seconds.");
         return;
       }
 
       applyPhotoSet(
         placeholderPhotos,
-        "Save your image as dea-photo.jpg next to this file, or tap Add photos.",
+        "Save your image as dea-photo.jpg next to this file.",
       );
     });
   </script>
